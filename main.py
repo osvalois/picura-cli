@@ -1,12 +1,6 @@
-# main.py
 import os
 import json
 from typing import Dict, Any, List
-from analyzers.code_analyzer import CodeAnalyzer
-from analyzers.documentation_analyzer import DocumentationAnalyzer
-from analyzers.architecture_analyzer import ArchitectureAnalyzer
-from generators.documentation_generator import DocumentationGenerator
-from utils.file_utils import get_project_structure, read_file_content, detect_language
 import logging
 import argparse
 import traceback
@@ -14,14 +8,32 @@ import traceback
 logging.basicConfig(level=logging.INFO, format='%(asctime)s - %(levelname)s - %(message)s')
 logger = logging.getLogger(__name__)
 
+try:
+    from analyzers.code_analyzer import CodeAnalyzer
+    from analyzers.documentation_analyzer import DocumentationAnalyzer
+    from analyzers.architecture_analyzer import ArchitectureAnalyzer
+    from generators.documentation_generator import DocumentationGenerator
+    from utils.file_utils import get_project_structure, read_file_content, detect_language
+    FULL_ANALYSIS_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Some modules could not be imported: {str(e)}")
+    logger.warning("Full analysis capabilities may not be available.")
+    FULL_ANALYSIS_AVAILABLE = False
+
 class AdvancedLocalSoftwareAnalyzer:
     def __init__(self):
-        self.code_analyzer = CodeAnalyzer()
-        self.documentation_analyzer = DocumentationAnalyzer()
-        self.architecture_analyzer = ArchitectureAnalyzer()
-        self.documentation_generator = DocumentationGenerator()
+        if FULL_ANALYSIS_AVAILABLE:
+            self.code_analyzer = CodeAnalyzer()
+            self.documentation_analyzer = DocumentationAnalyzer()
+            self.architecture_analyzer = ArchitectureAnalyzer()
+            self.documentation_generator = DocumentationGenerator()
+        else:
+            logger.warning("Analyzer initialized with limited capabilities.")
 
     def analyzeAndGenerateDocumentation(self, project_path: str) -> Dict[str, Any]:
+        if not FULL_ANALYSIS_AVAILABLE:
+            return {"error": "Full analysis capabilities are not available due to missing modules."}
+
         logger.info(f"Starting analysis of project: {project_path}")
         project_files = get_project_structure(project_path)
         

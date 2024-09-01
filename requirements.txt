@@ -187,7 +187,7 @@ six==1.16.0
     #   python-dateutil
 smart-open==6.4.0
     # via pathy
-spacy==3.1.0
+spacy[en-core-web-sm,en_core_web_sm]==3.1.0
     # via -r requirements.in
 spacy-legacy==3.0.12
     # via spacy

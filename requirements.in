@@ -2,7 +2,7 @@ numpy
 torch
 transformers
 tokenizers
-spacy
+spacy[en_core_web_sm]
 networkx
 matplotlib
 openai
