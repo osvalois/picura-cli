@@ -1,0 +1,77 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = "postgresql://picura_owner:bQrvXHJjOl69@ep-sparkling-surf-a5uworvl.us-east-2.aws.neon.tech/picura?sslmode=require"
+}
+
+model Project {
+  id                String     @id @default(cuid())
+  name              String
+  description       String?
+  repoUrl           String
+  path              String
+  externalOwnerId   String
+  externalCompanyId String
+  secretKey         String
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  documents         Document[]
+
+  @@map("projects")
+}
+
+model Document {
+  id        String            @id @default(cuid())
+  title     String
+  type      DocumentType
+  project   Project           @relation(fields: [projectId], references: [id])
+  projectId String
+  versions  DocumentVersion[]
+  createdAt DateTime          @default(now())
+  updatedAt DateTime          @updatedAt
+
+  @@map("documents")
+}
+
+model DocumentVersion {
+  id               String   @id @default(cuid())
+  document         Document @relation(fields: [documentId], references: [id])
+  documentId       String
+  content          String
+  version          Int
+  externalAuthorId String
+  createdAt        DateTime @default(now())
+  checksum         String
+
+  @@map("document_versions")
+}
+
+model AuditLog {
+  id             String     @id @default(cuid())
+  action         AuditAction
+  externalUserId String
+  entityType     String
+  entityId       String
+  details        Json?
+  timestamp      DateTime   @default(now())
+
+  @@map("audit_logs")
+}
+
+enum DocumentType {
+  ARCHITECTURE
+  DATA_SCHEMA
+  API_SPECIFICATION
+  USER_MANUAL
+  DEPLOYMENT
+}
+
+enum AuditAction {
+  CREATE
+  READ
+  UPDATE
+  DELETE
+}

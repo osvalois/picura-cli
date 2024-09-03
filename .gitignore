@@ -1,90 +1,44 @@
-# Archivos y directorios específicos de Python
-__pycache__/
-*.py[cod]
-*$py.class
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
 
-# Entornos virtuales
-venv/
-env/
-.env
-
-# Archivos de distribución / empaquetado
-*.egg-info/
-dist/
-build/
-*.egg
-
-# Archivos de PyInstaller
-*.manifest
-*.spec
-
-# Archivos de registro
+# Logs
+logs/
 *.log
+*.log.*
 
-# Archivos de análisis de código estático
-.mypy_cache/
-.pytest_cache/
-.ruff_cache/
+# Dependency directories
+/.pnp
+.pnp.js
 
-# Archivos de IDE y editores
-.vscode/
-.idea/
-*.swp
-*.swo
-*~
+# TypeScript
+*.tsbuildinfo
 
-# Archivos de sistema operativo
-.DS_Store
-Thumbs.db
+# Build output
+/dist/
+/bin/
+/oclif.manifest.json
 
-# Archivos de configuración local
-config.local.py
+# Optional npm cache directory
+.npm
 
-# Directorios de datos y resultados
-data/
-results/
-output/
-
-# Archivos de modelos entrenados (pueden ser grandes)
-*.pth
-*.h5
-*.pkl
-
-# Archivos temporales
-tmp/
-temp/
-
-# Archivos de dependencias
-pip-lock.txt
-
-# Archivos de documentación generados
-docs/_build/
-
-# Archivos de cobertura de código
-.coverage
-htmlcov/
-
-# Archivos específicos de la aplicación
-analysis_results.json
-
-# Archivos de tokens o secretos
-*.secret
-*.key
-
-# Directorios de caché de spaCy
-.spacy/
-
-# Archivos de perfil
-*.prof
-
-# Archivos de base de datos
-*.db
-*.sqlite3
-
-# Archivos de cuadernos Jupyter
-.ipynb_checkpoints
-*.ipynb
-
-# Archivos de configuración de entorno
+# Dotenv environment variables file
 .env
-.envrc
+
+# macOS
+.DS_Store
+
+# IDEs and editors
+.idea/
+.vscode/
+*.sublime-project
+*.sublime-workspace
+
+# Prisma
+/prisma/dev.db
+/prisma/migrations/
+
+# Other
+coverage/
