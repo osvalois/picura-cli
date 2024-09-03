@@ -52,11 +52,11 @@ test: build
 analyze-at-sync:
 	@echo "$(YELLOW)Analyzing at-sync-data-states-ms project...$(NC)"
 #	@$(NODE) $(PICURA) init --name="at-sync-data-states-ms" --description="Data states synchronization microservice" --path="/Users/oscarvalois/Documents/Hergon/at-sync-data-states-ms"
-	@$(NODE) $(PICURA) generate --type=ARCHITECTURE --project=cm0lt654p0000eij86x9jm2fe
-	@$(NODE) $(PICURA) generate --type=DATA_SCHEMA --project=cm0lt654p0000eij86x9jm2fe
-	@$(NODE) $(PICURA) generate --type=API_SPECIFICATION --project=cm0lt654p0000eij86x9jm2fe
-	@$(NODE) $(PICURA) generate --type=USER_MANUAL --project=cm0lt654p0000eij86x9jm2fe
-	@$(NODE) $(PICURA) generate --type=DEPLOYMENT --project=cm0lt654p0000eij86x9jm2fe
+	@$(NODE) $(PICURA) generate --type=ARCHITECTURE --project=cm0lupjsd0000137ea9ng8ll2
+	@$(NODE) $(PICURA) generate --type=DATA_SCHEMA --project=cm0lupjsd0000137ea9ng8ll2
+	@$(NODE) $(PICURA) generate --type=API_SPECIFICATION --project=cm0lupjsd0000137ea9ng8ll2
+	@$(NODE) $(PICURA) generate --type=USER_MANUAL --project=cm0lupjsd0000137ea9ng8ll2
+	@$(NODE) $(PICURA) generate --type=DEPLOYMENT --project=cm0lupjsd0000137ea9ng8ll2
 update-local:
 	@echo "$(YELLOW)Updating local PICURA CLI dependency...$(NC)"
 	@$(NPM) run update-local
