@@ -1,0 +1,100 @@
+{
+  "version": "0.0.1",
+  "commands": {
+    "generate": {
+      "id": "generate",
+      "description": "Generate comprehensive and high-quality project documentation",
+      "strict": true,
+      "pluginName": "picura",
+      "pluginAlias": "picura",
+      "pluginType": "core",
+      "aliases": [],
+      "hiddenAliases": [],
+      "flags": {
+        "type": {
+          "name": "type",
+          "type": "option",
+          "char": "t",
+          "description": "Type of document to generate",
+          "required": true,
+          "multiple": false,
+          "options": [
+            "ARCHITECTURE",
+            "DATA_SCHEMA",
+            "DEPLOYMENT",
+            "API_SPECIFICATION",
+            "USER_MANUAL"
+          ]
+        },
+        "project": {
+          "name": "project",
+          "type": "option",
+          "char": "p",
+          "description": "Project ID (optional if in a PICURA project directory)",
+          "required": false,
+          "multiple": false
+        },
+        "force": {
+          "name": "force",
+          "type": "boolean",
+          "char": "f",
+          "description": "Force regeneration if the document already exists",
+          "allowNo": false
+        },
+        "output": {
+          "name": "output",
+          "type": "option",
+          "char": "o",
+          "description": "Output directory for generated documents",
+          "multiple": false,
+          "default": "./docs"
+        }
+      },
+      "args": {}
+    },
+    "init": {
+      "id": "init",
+      "description": "Initialize a new PICURA project",
+      "strict": true,
+      "pluginName": "picura",
+      "pluginAlias": "picura",
+      "pluginType": "core",
+      "aliases": [],
+      "hiddenAliases": [],
+      "flags": {
+        "name": {
+          "name": "name",
+          "type": "option",
+          "char": "n",
+          "description": "Nombre del proyecto",
+          "required": true,
+          "multiple": false
+        },
+        "description": {
+          "name": "description",
+          "type": "option",
+          "char": "d",
+          "description": "Descripción del proyecto",
+          "required": false,
+          "multiple": false
+        },
+        "path": {
+          "name": "path",
+          "type": "option",
+          "char": "p",
+          "description": "Ruta al proyecto",
+          "multiple": false,
+          "default": "."
+        },
+        "force": {
+          "name": "force",
+          "type": "boolean",
+          "char": "f",
+          "description": "Forzar la inicialización incluso si el directorio no está vacío",
+          "allowNo": false
+        }
+      },
+      "args": {}
+    }
+  }
+}
