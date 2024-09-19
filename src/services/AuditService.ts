@@ -1,5 +1,5 @@
 import { PrismaClient, AuditAction } from '@prisma/client';
-import { LoggingService } from './LoggingService';
+import { LoggingService } from './LoggingService.js';
 
 export class AuditService {
   private prisma: PrismaClient;

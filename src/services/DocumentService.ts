@@ -2,7 +2,7 @@ import { PrismaClient, Document, DocumentType, DocumentVersion } from '@prisma/c
 import fs from 'fs-extra';
 import path from 'path';
 import crypto from 'crypto';
-import { LoggingService } from './LoggingService';
+import { LoggingService } from './LoggingService.js';
 
 export class DocumentService {
   private prisma: PrismaClient;

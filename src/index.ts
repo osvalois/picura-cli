@@ -1,23 +1,16 @@
-import { Command, Flags, Args } from '@oclif/core'
-import * as fs from 'fs-extra'
-import * as path from 'path'
-import * as dotenv from 'dotenv'
+import { Command, Flags } from '@oclif/core'
 import { PrismaClient } from '@prisma/client'
-import { LoggingService } from './services/LoggingService'
+import { LoggingService } from './services/LoggingService.js'
+import chalk from 'chalk'
+import figlet from 'figlet'
 
-dotenv.config()
-
-export default class PicuraCLI extends Command {
+export class PicuraCLI extends Command {
   static description = 'PICURA: CLI Avanzada para Gestión Integral de Proyectos de Software'
 
   static flags = {
-    version: Flags.version({ char: 'v' }),
     help: Flags.help({ char: 'h' }),
   }
 
-  static args = {
-    command: Args.string({ description: 'Command to run', required: false }),
-  }
   private prisma: PrismaClient
   private logger: LoggingService
 
@@ -28,24 +21,37 @@ export default class PicuraCLI extends Command {
   }
 
   async run(): Promise<void> {
-    const { args } = await this.parse(PicuraCLI)
+    const { flags } = await this.parse(PicuraCLI)
 
-    if (!args.command) {
-      this.log('Bienvenido a PICURA CLI')
+    try {
+      this.displayWelcomeMessage()
+
+      // No es necesario comprobar manualmente si flags.version está presente
+
       await this.displayAvailableCommands()
-    } else {
-      this.error(`Comando desconocido: ${args.command}`)
+    } catch (error) {
+      this.logger.error('Error al ejecutar PICURA CLI:', { error: error instanceof Error ? error.message : String(error) })
+      this.error(chalk.red('Se produjo un error al ejecutar PICURA CLI. Por favor, revise los logs para más detalles.'))
     }
   }
 
-  async displayAvailableCommands(): Promise<void> {
-    this.log('\nComandos disponibles:')
-    this.log('- init: Inicializar un nuevo proyecto PICURA')
-    this.log('- generate: Generar documentación del proyecto')
-    this.log('\nPara obtener ayuda sobre un comando específico, ejecute: picura [comando] --help')
+  private displayWelcomeMessage(): void {
+    this.log(
+      chalk.cyan(
+        figlet.textSync('PICURA CLI', { horizontalLayout: 'full' })
+      )
+    )
+    this.log(chalk.yellow('Bienvenido a PICURA CLI - Gestión Integral de Proyectos de Software\n'))
   }
 
-  async finally(err: Error | undefined): Promise<void> {
+  private async displayAvailableCommands(): Promise<void> {
+    this.log(chalk.yellow('\nComandos disponibles:'))
+    this.log(chalk.green('- init:     ') + 'Inicializar un nuevo proyecto PICURA')
+    this.log(chalk.green('- generate: ') + 'Generar documentación del proyecto')
+    this.log(chalk.blue('\nPara obtener ayuda sobre un comando específico, ejecute: picura [comando] --help'))
+  }
+
+  async finally(err?: Error): Promise<void> {
     await this.prisma.$disconnect()
     if (err) {
       this.logger.error('Se produjo un error inesperado:', { error: err.message })

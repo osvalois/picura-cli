@@ -1,6 +1,6 @@
 import fs from 'fs-extra';
 import path from 'path';
-import { LoggingService } from './LoggingService';
+import { LoggingService } from './LoggingService.js';
 
 export class ConfigService {
   private logger: LoggingService;

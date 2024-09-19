@@ -1,7 +1,7 @@
 import simpleGit, { SimpleGit } from 'simple-git';
 import fs from 'fs-extra';
 import path from 'path';
-import { LoggingService } from './LoggingService';
+import { LoggingService } from './LoggingService.js';
 
 export class GitService {
   private git: SimpleGit;
@@ -55,6 +55,28 @@ export class GitService {
       }
     } catch (error) {
       this.logger.error(`Failed to setup Git hooks in directory: ${dir}`, { error: error instanceof Error ? error.message : String(error) });
+      throw error;
+    }
+  }
+
+  // Añadir este método
+  async initializeRepository(dir: string): Promise<void> {
+    try {
+      await this.git.cwd(dir).init();
+      this.logger.info(`Git repository initialized in: ${dir}`);
+    } catch (error) {
+      this.logger.error(`Failed to initialize Git repository in directory: ${dir}`, { error: error instanceof Error ? error.message : String(error) });
+      throw error;
+    }
+  }
+
+  // Añadir este método
+  async setRemoteUrl(dir: string, url: string): Promise<void> {
+    try {
+      await this.git.cwd(dir).addRemote('origin', url);
+      this.logger.info(`Remote URL set to: ${url}`);
+    } catch (error) {
+      this.logger.error(`Failed to set remote URL for directory: ${dir}`, { error: error instanceof Error ? error.message : String(error) });
       throw error;
     }
   }

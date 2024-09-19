@@ -1,32 +1,32 @@
 import { Command, Flags } from '@oclif/core';
-import { DocumentService } from '../services/DocumentService';
-import { ProjectService } from '../services/ProjectService';
-import { AIService } from '../services/AIService';
+import { DocumentService } from '../services/DocumentService.js';
+import { ProjectService } from '../services/ProjectService.js';
+import { AIService } from '../services/AIService.js';
 import { DocumentType, AuditAction } from '@prisma/client';
-import { LoggingService } from '../services/LoggingService';
-import { AuditService } from '../services/AuditService';
+import { LoggingService } from '../services/LoggingService.js';
+import { AuditService } from '../services/AuditService.js';
 import chalk from 'chalk';
-import ora from 'ora';
-
+import figlet from 'figlet';
+import inquirer from 'inquirer';
 export default class Generate extends Command {
-  static description = 'Generate comprehensive project documentation';
+  static description = 'Generate comprehensive project documentation with AI assistance';
 
   static flags = {
     type: Flags.string({
       char: 't',
       description: 'Type of document to generate',
       options: Object.values(DocumentType),
-      required: true
+      required: true,
     }),
     project: Flags.string({
       char: 'p', 
-      description: 'Project ID (optional if in project directory)'
+      description: 'Project ID (optional if in project directory)',
     }),
     force: Flags.boolean({
       char: 'f',
       description: 'Force regeneration if document already exists',
-      default: false
-    })
+      default: false,
+    }),
   };
 
   private documentService: DocumentService;
@@ -44,9 +44,12 @@ export default class Generate extends Command {
     this.auditService = new AuditService(this.logger);
   }
 
-  async run() {
+  async run(): Promise<void> {
     const { flags } = await this.parse(Generate);
-    const spinner = ora('Initializing document generation process...').start();
+    
+    this.displayWelcomeMessage();
+
+    this.log('Initializing document generation process...');
 
     try {
       const projectId = flags.project || await this.projectService.getProjectIdFromCurrentDirectory();
@@ -61,7 +64,7 @@ export default class Generate extends Command {
 
       this.logger.info(`Starting document generation for project: ${project.name}`, { projectId, documentType: flags.type });
 
-      spinner.succeed(chalk.green(`Project "${project.name}" found.`));
+      this.log(chalk.green(`Project "${project.name}" found.`));
 
       const existingDocument = await this.documentService.getDocumentByTypeAndProject(
         flags.type as DocumentType,
@@ -70,29 +73,37 @@ export default class Generate extends Command {
 
       if (existingDocument && !flags.force) {
         this.logger.info(`Document of type ${flags.type} already exists.`, { documentId: existingDocument.id });
-        spinner.info(chalk.yellow(`Document of type ${flags.type} already exists for this project.`));
-        spinner.info(chalk.yellow(`Use --force flag to regenerate the document.`));
-        this.exit(0);
+        this.log(chalk.yellow(`Document of type ${flags.type} already exists for this project.`));
+        this.log(chalk.yellow(`Use --force flag to regenerate the document.`));
+        return;
       }
 
-      spinner.text = 'Analyzing project structure...';
+      this.log('Analyzing project structure...');
       const projectStructure = await this.projectService.analyzeProjectStructure(project.path);
       this.logger.debug('Project structure analysis complete', { structureSize: JSON.stringify(projectStructure).length });
-      spinner.succeed(chalk.green('Project structure analysis complete.'));
+      this.log(chalk.green('Project structure analysis complete.'));
 
-      spinner.text = `Generating ${flags.type} document using AI...`;
-      const content = await this.aiService.generateDocumentContent(flags.type as DocumentType, projectStructure);
+      this.displayProjectSummary(projectStructure);
+
+      const proceed = await this.promptConfirmation('Do you want to proceed with document generation?');
+      if (!proceed) {
+        this.log(chalk.red('Document generation cancelled.'));
+        return;
+      }
+
+      this.log(`Generating ${flags.type} document using AI...`);
+      const content = await this.aiService.generateDocumentContent(flags.type as DocumentType, project.path);
       this.logger.debug(`${flags.type} document content generated`, { contentSize: content.length });
-      spinner.succeed(chalk.green(`${flags.type.charAt(0).toUpperCase() + flags.type.slice(1)} document content generated.`));
+      this.log(chalk.green(`${flags.type.charAt(0).toUpperCase() + flags.type.slice(1)} document content generated.`));
 
       let document;
       if (existingDocument && flags.force) {
-        spinner.text = 'Updating existing document...';
+        this.log('Updating existing document...');
         document = await this.documentService.updateDocument(existingDocument.id, content);
         this.logger.info('Document updated', { documentId: document.id });
-        spinner.succeed(chalk.green('Document updated successfully.'));
+        this.log(chalk.green('Document updated successfully.'));
       } else {
-        spinner.text = 'Creating new document...';
+        this.log('Creating new document...');
         document = await this.documentService.createDocument({
           title: `${project.name} - ${flags.type.charAt(0).toUpperCase() + flags.type.slice(1)}`,
           type: flags.type as DocumentType,
@@ -100,7 +111,7 @@ export default class Generate extends Command {
           content: content,
         });
         this.logger.info('New document created', { documentId: document.id });
-        spinner.succeed(chalk.green('Document created successfully.'));
+        this.log(chalk.green('Document created successfully.'));
       }
 
       await this.auditService.logAudit({
@@ -115,19 +126,83 @@ export default class Generate extends Command {
         },
       });
 
-      this.log(chalk.cyan(`\nDocument Details:`));
-      this.log(chalk.cyan(`- Title: ${document.title}`));
-      this.log(chalk.cyan(`- ID: ${document.id}`));
-      this.log(chalk.cyan(`- Type: ${document.type}`));
-      this.log(chalk.cyan(`- Path: ${project.path}/docs/${flags.type.toLowerCase()}/${document.title}.md`));
+      this.displayDocumentSummary(document, project);
 
       this.logger.info('Document generation process completed successfully', { documentId: document.id });
-      this.log(chalk.green('\nDocument generation process completed successfully.'));
+      this.displaySuccessMessage();
 
     } catch (error) {
-      spinner.fail(chalk.red('Document generation failed.'));
       this.logger.error('Document generation failed', { error: error instanceof Error ? error.message : String(error) });
       this.error(chalk.red(`Failed to generate document: ${error instanceof Error ? error.message : String(error)}`));
     }
+  }
+
+  private async promptConfirmation(message: string): Promise<boolean> {
+    const { confirm } = await inquirer.prompt([
+      {
+        type: 'confirm',
+        name: 'confirm',
+        message: chalk.yellow(message),
+      },
+    ]);
+    return confirm;
+  }
+
+  private displayWelcomeMessage(): void {
+    this.log(
+      chalk.cyan(
+        figlet.textSync('DocuMentor AI', { horizontalLayout: 'full' })
+      )
+    );
+    this.log(chalk.yellow('Welcome to the next-generation AI-powered documentation generator!\n'));
+  }
+
+  private displayProjectSummary(projectStructure: any): void {
+    const fileCount = this.countFiles(projectStructure);
+    const directoryCount = this.countDirectories(projectStructure);
+    this.log(chalk.green('Project Summary'));
+    this.log(chalk.white(`Total Files: ${fileCount}`));
+    this.log(chalk.white(`Total Directories: ${directoryCount}`));
+    this.log(chalk.white(`Main Directory: ${Object.keys(projectStructure)[0]}`));
+  }
+
+  private countFiles(structure: any): number {
+    let count = 0;
+    for (const key in structure) {
+      if (typeof structure[key] === 'object' && structure[key] !== null) {
+        count += this.countFiles(structure[key]);
+      } else {
+        count++;
+      }
+    }
+    return count;
+  }
+
+  private countDirectories(structure: any): number {
+    let count = 0;
+    for (const key in structure) {
+      if (typeof structure[key] === 'object' && structure[key] !== null) {
+        count++;
+        count += this.countDirectories(structure[key]);
+      }
+    }
+    return count;
+  }
+
+  private displayDocumentSummary(document: any, project: any): void {
+    this.log(chalk.cyan('Document Details'));
+    this.log(chalk.white(`Title: ${document.title}`));
+    this.log(chalk.white(`ID: ${document.id}`));
+    this.log(chalk.white(`Type: ${document.type}`));
+    this.log(chalk.white(`Path: ${project.path}/docs/${document.type.toLowerCase()}/${document.title}.md`));
+  }
+
+  private displaySuccessMessage(): void {
+    this.log(
+      chalk.green(
+        figlet.textSync('Success!', { horizontalLayout: 'full' })
+      )
+    );
+    this.log(chalk.yellow('Your AI-generated documentation is ready. Happy coding!\n'));
   }
 }
