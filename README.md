@@ -1,155 +1,150 @@
-# PICURA: Propuesta de Funcionalidades Actualizada
+# PICURA-CLI
 
-## 1. Resumen Ejecutivo
+[![License](https://img.shields.io/badge/license-MIT-blue.svg)](https://opensource.org/licenses/MIT)
+[![npm version](https://badge.fury.io/js/picura-cli.svg)](https://badge.fury.io/js/picura-cli)
+[![Build Status](https://github.com/picura/picura-cli/workflows/CI/badge.svg)](https://github.com/picura/picura-cli/actions)
+[![Coverage Status](https://coveralls.io/repos/github/picura/picura-cli/badge.svg?branch=main)](https://coveralls.io/github/picura/picura-cli?branch=main)
+[![Maintainability](https://api.codeclimate.com/v1/badges/a99a88d28ad37a79dbf6/maintainability)](https://codeclimate.com/github/picura/picura-cli)
 
-PICURA es una CLI (Interfaz de Línea de Comandos) avanzada diseñada para revolucionar la gestión integral de proyectos de software. Utilizando tecnologías de vanguardia y algoritmos de inteligencia artificial, PICURA ofrece una solución completa para la documentación, análisis y asistencia en proyectos de desarrollo, estableciendo un nuevo estándar en la industria global del software.
+PICURA-CLI aims to streamline workflows, improve code quality, and facilitate collaboration throughout the project lifecycle. By offering a suite of automated tools, it helps development teams increase productivity and maintain high standards in software development.
 
-## 2. Visión y Misión
+## Table of Contents
 
-**Visión**: Ser la herramienta CLI líder a nivel mundial en gestión de proyectos de software, impulsando la eficiencia y calidad en el desarrollo de software en organizaciones de todos los tamaños.
+- [Features](#features)
+- [Installation](#installation)
+- [Usage](#usage)
+- [Configuration](#configuration)
+- [Commands](#commands)
+- [Contributing](#contributing)
+- [Security](#security)
+- [License](#license)
+- [Support](#support)
 
-**Misión**: Proporcionar a los equipos de desarrollo una plataforma inteligente y fácil de usar que automatice tareas complejas, mejore la colaboración y eleve la calidad del software producido.
+## Features
 
-## 3. Funcionalidades Clave
+- **Project Management**: Create and configure new projects, integrate with version control systems, and manage multiple environments.
+- **AI-Powered Documentation Generation**: Automatically create architectural documents, data schemas, API specifications, user manuals, and deployment plans.
+- **Advanced Code Analysis**: Evaluate code quality, detect security vulnerabilities, analyze performance, and receive AI-based improvement recommendations.
+- **Deployment Management**: Automate deployments, perform automatic rollbacks, and monitor deployment status in real-time.
+- **AI Technical Assistance**: Get real-time problem resolution, code optimization suggestions, and error prediction and prevention.
+- **Comprehensive Auditing and Security**: Detailed logging of all actions, encryption of sensitive data, and role-based access control.
 
-### 3.1 Gestión de Proyectos
-- Creación y configuración de nuevos proyectos
-- Integración con sistemas de control de versiones
-- Gestión de múltiples entornos (desarrollo, staging, producción)
+## Installation
 
-### 3.2 Generación de Documentación
-- Documentos arquitectónicos
-- Esquemas de datos
-- Especificaciones de API
-- Manuales de usuario
-- Planes de despliegue
+Ensure you have Node.js v18 or later installed. Then run:
 
-### 3.3 Análisis de Código
-- Evaluación de calidad de código
-- Detección de vulnerabilidades de seguridad
-- Análisis de rendimiento
-- Recomendaciones de mejora basadas en IA
+```bash
+npm install -g picura-cli
+```
 
-### 3.4 Gestión de Despliegues
-- Automatización de despliegues
-- Rollbacks automáticos
-- Monitoreo de estado de despliegues
+## Usage
 
-### 3.5 Asistencia Técnica con IA
-- Resolución de problemas en tiempo real
-- Sugerencias de optimización de código
-- Predicción y prevención de errores
+To initialize a new PICURA project:
 
-### 3.6 Auditoría y Seguridad
-- Registro detallado de todas las acciones
-- Encriptación de datos sensibles
-- Control de acceso basado en roles
-
-## 4. Arquitectura Tecnológica
-
-### 4.1 Backend
-- **Runtime**: Node.js v18+
-- **Lenguaje**: TypeScript 5.0+
-- **Framework CLI**: Oclif
-- **ORM**: Prisma
-- **Base de Datos**: PostgreSQL (Neon)
-
-### 4.2 Integración IA
-- **NLP**: OpenAI GPT-4 API
-- **Análisis de Código**: CodeBERT (Microsoft Research)
-- **Machine Learning**: TensorFlow.js
-
-### 4.3 Seguridad
-- Encriptación de datos sensibles
-- Generación segura de claves secretas por proyecto
-- Autenticación y autorización robustas
-
-## 5. Estructura de Datos
-
-La estructura de datos de PICURA ha sido diseñada para ofrecer máxima seguridad, rendimiento y escalabilidad:
-
-- **Proyectos**: Entidad central que agrupa toda la información relacionada.
-- **Documentos**: Versiones de diferentes tipos de documentación.
-- **Análisis de Código**: Resultados detallados de análisis estáticos y dinámicos.
-- **Despliegues**: Registro y estado de todos los despliegues realizados.
-- **Asistentes IA**: Configuración y registro de interacciones con asistentes de IA.
-- **Logs de Auditoría**: Registro detallado de todas las acciones realizadas en el sistema.
-
-## 6. Flujo de Trabajo y Funcionalidades Detalladas
-
-### 6.1 Inicialización de Proyecto
 ```bash
 picura init <project-name>
 ```
-- Configura la estructura inicial del proyecto
-- Genera una clave secreta única para el proyecto
-- Integra con el repositorio de código existente
 
-### 6.2 Generación de Documentación
+For more detailed usage instructions, see the [Commands](#commands) section.
+
+## Configuration
+
+PICURA uses a `picura.config.js` file in the root of your project for configuration. Here's a sample configuration:
+
+```javascript
+module.exports = {
+  project: {
+    name: 'MyAwesomeProject',
+    version: '1.0.0',
+  },
+  analysis: {
+    plugins: ['sonarqube'],
+    sonarqube: {
+      serverUrl: 'http://localhost:9000',
+      token: process.env.SONAR_TOKEN,
+    },
+  },
+  ai: {
+    provider: 'openai',
+    apiKey: process.env.OPENAI_API_KEY,
+  },
+};
+```
+
+## Commands
+
+### Initialize Project
+
+```bash
+picura init <project-name>
+```
+
+Options:
+- `-n, --name <name>`: Project name
+- `-d, --description <description>`: Project description
+- `-p, --path <path>`: Path to the project (default: current directory)
+- `-f, --force`: Force initialization even if the directory is not a Git repository
+
+### Generate Documentation
+
 ```bash
 picura generate doc <doc-type>
 ```
-- Analiza la estructura y código del proyecto
-- Utiliza IA para generar contenido relevante
-- Versiona y almacena los documentos de forma segura
 
-### 6.3 Análisis de Código
+Options:
+- `-t, --type <type>`: Type of document to generate (required)
+- `-p, --project <id>`: Project ID (optional if in project directory)
+- `-f, --force`: Force regeneration if document already exists
+
+Available document types:
+- `ARCHITECTURE`
+- `DATA_SCHEMA`
+- `API_SPECIFICATION`
+- `USER_MANUAL`
+- `DEPLOYMENT`
+
+### Analyze Code
+
 ```bash
 picura analyze
 ```
-- Ejecuta análisis estático y dinámico del código
-- Genera reporte detallado de calidad, seguridad y rendimiento
-- Proporciona recomendaciones accionables basadas en IA
 
-### 6.4 Gestión de Despliegues
+This command runs a comprehensive code analysis using configured plugins (e.g., SonarQube) and AI algorithms.
+
+### Deploy
+
 ```bash
 picura deploy <environment>
 ```
-- Automatiza el proceso de despliegue
-- Realiza verificaciones de seguridad pre-despliegue
-- Monitorea y reporta el estado del despliegue en tiempo real
 
-### 6.5 Asistencia Técnica
+Automates the deployment process to the specified environment.
+
+### AI Assistance
+
 ```bash
 picura assist
 ```
-- Inicia una sesión interactiva con el asistente IA
-- Proporciona respuestas contextuales basadas en el proyecto actual
-- Ofrece sugerencias proactivas para mejora del código y resolución de problemas
 
-## 7. Seguridad y Cumplimiento
+Initiates an interactive session with the AI assistant for real-time technical support.
 
-- Encriptación end-to-end de datos sensibles
-- Cumplimiento con estándares GDPR y CCPA
-- Auditoría completa de todas las acciones realizadas
-- Integración con sistemas de gestión de identidad empresarial
+## Contributing
 
-## 8. Escalabilidad y Rendimiento
+We welcome contributions to PICURA-CLI! Please see our [Contributing Guide](CONTRIBUTING.md) for more details on how to get started.
 
-- Arquitectura diseñada para manejar proyectos de gran escala
-- Optimización de consultas a base de datos mediante índices estratégicos
-- Capacidad de procesamiento distribuido para análisis de código extensos
+## Security
 
-## 9. Integración y Ecosistema
+Security is a top priority for PICURA-CLI. If you discover a security vulnerability, please follow our [Security Policy](SECURITY.md) for responsible disclosure.
 
-- Plugins para IDEs populares (VSCode, JetBrains)
-- Integración con sistemas CI/CD (Jenkins, GitLab CI, GitHub Actions)
-- APIs para extensión y personalización de funcionalidades
+## License
 
-## 10. Roadmap de Desarrollo
+PICURA-CLI is open-source software licensed under the [MIT license](LICENSE).
 
-### Fase 1: MVP (Q4 2024)
-- Implementación de funcionalidades core
-- Soporte básico para proyectos JavaScript/TypeScript
+## Support
 
-### Fase 2: Expansión (Q2 2025)
-- Soporte para lenguajes adicionales (Python, Java, Go)
-- Lanzamiento de plugins para IDEs
+For bug reports and feature requests, please use our [Issue Tracker](https://github.com/picura/picura-cli/issues).
 
-### Fase 3: Enterprise (Q4 2025)
-- Características avanzadas de seguridad y cumplimiento
-- Soporte para despliegue on-premise
+For general questions and discussions, join our [Community Forum](https://community.picura.io).
 
-## 11. Conclusión
+---
 
-PICURA representa un salto cualitativo en la gestión de proyectos de software, ofreciendo una suite completa de herramientas impulsadas por IA que abordan todos los aspectos del ciclo de vida del desarrollo. Con su enfoque en seguridad, escalabilidad y eficiencia, PICURA está posicionada para convertirse en una herramienta indispensable para desarrolladores y organizaciones de todos los tamaños, estableciendo un nuevo estándar en la industria del desarrollo de software.
+Built with ❤️ by the PICURA team.
