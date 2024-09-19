@@ -1,4 +1,4 @@
-# PICURA: Propuesta de Funcionalidades Actualizada
+# PICURA-CLI
 
 ## 1. Resumen Ejecutivo
 
